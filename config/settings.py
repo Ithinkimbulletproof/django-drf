@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -43,6 +44,8 @@ INSTALLED_APPS = [
     "django_extensions",
     "phonenumber_field",
     "rest_framework",
+    "django_filters",
+    "rest_framework_simplejwt",
     "materials",
     "users",
 ]
@@ -91,6 +94,13 @@ DATABASES = {
     }
 }
 
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -135,3 +145,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 PHONENUMBER_DEFAULT_REGION = "RU"
 AUTH_USER_MODEL = "users.User"
+
+
+# Настройки срока действия токенов
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
