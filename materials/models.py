@@ -7,6 +7,9 @@ class Course(models.Model):
         upload_to="courses/", verbose_name="Превью курса", blank=True, null=True
     )
     description_course = models.TextField(verbose_name="Описание курса")
+    link_to_video_course = models.URLField(
+        verbose_name="Ссылка на видео курса", blank=True, null=True
+    )
     created_at_course = models.DateTimeField(
         auto_now_add=True, verbose_name="Дата создания курса"
     )
@@ -32,7 +35,9 @@ class Lesson(models.Model):
         upload_to="lessons/", verbose_name="Превью урока", blank=True, null=True
     )
     description_lesson = models.TextField(verbose_name="Описание урока")
-    link_to_video = models.URLField(verbose_name="Ссылка на видео")
+    link_to_video_lesson = models.URLField(
+        verbose_name="Ссылка на видео урока", blank=True, null=True
+    )
     created_at_lesson = models.DateTimeField(
         auto_now_add=True, verbose_name="Дата создания урока"
     )
@@ -53,3 +58,19 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = "Урок"
         verbose_name_plural = "Уроки"
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        "users.User", on_delete=models.CASCADE, blank=True, null=True
+    )
+    course = models.ForeignKey(
+        "materials.Course", on_delete=models.CASCADE, blank=True, null=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "course")  # Уникальная связка пользователя и курса
+
+    def __str__(self):
+        return f"{self.user.username} подписан на {self.course.title_course}"
