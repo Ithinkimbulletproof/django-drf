@@ -15,11 +15,17 @@ class LessonSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     lessons_count = serializers.SerializerMethodField()
     lessons = LessonSerializer(many=True, read_only=True)
-
     link_to_video_course = serializers.URLField(validators=[LinkToVideoValidator()])
+    is_subscribed = serializers.SerializerMethodField()
 
     def get_lessons_count(self, obj):
         return obj.lessons.count()
+
+    def get_is_subscribed(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            return user in obj.subscribers.all()
+        return False
 
     class Meta:
         model = Course
