@@ -21,12 +21,6 @@ class CourseSerializer(serializers.ModelSerializer):
     def get_lessons_count(self, obj):
         return obj.lessons.count()
 
-    def get_is_subscribed(self, obj):
-        user = self.context['request'].user
-        if user.is_authenticated:
-            return user in obj.subscribers.all()
-        return False
-
     class Meta:
         model = Course
         exclude = ("created_at_course",)

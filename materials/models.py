@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Course(models.Model):
-    title_course = models.CharField(max_length=200, verbose_name="Название курса")
+    title = models.CharField(max_length=200, verbose_name="Название курса")
     preview_course = models.ImageField(
         upload_to="courses/", verbose_name="Превью курса", blank=True, null=True
     )
@@ -21,8 +21,14 @@ class Course(models.Model):
         related_name="course_owner",
     )
 
+    def update_course(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        from materials.tasks import send_course_update_notifications
+
+        send_course_update_notifications.delay(self.id)
+
     def __str__(self):
-        return self.title_course
+        return self.title
 
     class Meta:
         verbose_name = "Курс"
@@ -30,7 +36,7 @@ class Course(models.Model):
 
 
 class Lesson(models.Model):
-    title_lesson = models.CharField(max_length=200, verbose_name="Название урока")
+    title = models.CharField(max_length=200, verbose_name="Название урока")
     preview_lesson = models.ImageField(
         upload_to="lessons/", verbose_name="Превью урока", blank=True, null=True
     )
